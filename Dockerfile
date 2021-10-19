@@ -1,9 +1,16 @@
-FROM php:8.0-apache
+FROM composer:2.1.9 as build
+WORKDIR /app
+COPY . /app
+RUN composer global require hirak/prestissimo && composer install
 
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf \
-&& sed -i 's!/var/www/html!/var/www/app/public!g' /etc/apache2/sites-available/000-default.conf
+FROM php:8.0-apache-stretch
+RUN docker-php-ext-install pdo pdo_mysql
 
-WORKDIR /var/www/app
-COPY ./app .
-
-RUN a2enmod rewrite
+EXPOSE 8080
+COPY --from=build /app /var/www/
+COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY .env.example /var/www/.env
+RUN chmod 777 -R /var/www/storage/ && \
+    echo "Listen 8080" >> /etc/apache2/ports.conf && \
+    chown -R www-data:www-data /var/www/ && \
+    a2enmod rewrite

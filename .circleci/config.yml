@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   php: circleci/php@1.1.0
+  aws-ecr: circleci/aws-ecr@7.2.0
 
 workflows:
   test-and-deploy:
@@ -9,3 +10,6 @@ workflows:
       # PHP Orb
       - php/test:
           version: '8.0'
+      - aws-ecr/build-and-push-image
+          context: aws-ce
+          repo: tadashi-demo-php-apprunner

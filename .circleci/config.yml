@@ -11,6 +11,10 @@ workflows:
       - php/test:
           name: Test
           version: '8.0'
+      - php/test:
+          name: Lint
+          test-command: lint
+          version: '8.0'
       - aws-ecr/build-and-push-image:
           context: aws-ce
           repo: tadashi-demo-php-apprunner

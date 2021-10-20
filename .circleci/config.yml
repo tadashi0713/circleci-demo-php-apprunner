@@ -4,12 +4,26 @@ orbs:
   php: circleci/php@1.1.0
   aws-ecr: circleci/aws-ecr@7.2.0
 
+jobs:
+  deploy_aws_apprunner:
+    machine:
+      # Docker Layer Caching
+      docker_layer_caching: true
+      # Resource Class
+      resource_class: large
+    steps:
+      - checkout
+      - aws-ecr/build-and-push-image:
+          repo: tadashi-demo-php-apprunner
+      - run:
+          command: aws apprunner start-deployment --service-arn \
+                   arn:aws:apprunner:ap-northeast-1:660990364978:service/tadashi-demo-php-service/4e014e8904cd425793961075c81c4c10
+
 workflows:
   test-and-deploy:
     jobs:
       # PHP Orb
       - php/test:
           version: '8.0'
-      - aws-ecr/build-and-push-image:
+      - deploy_aws_apprunner:
           context: aws-ce
-          repo: tadashi-demo-php-apprunner

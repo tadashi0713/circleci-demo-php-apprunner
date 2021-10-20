@@ -13,6 +13,4 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return view('greeting', ['name' => 'James']);
-});
+$router->get('/', 'ExampleController@index');

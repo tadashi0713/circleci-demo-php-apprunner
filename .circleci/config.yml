@@ -4,6 +4,14 @@ orbs:
   php: circleci/php@1.1.0
   aws-ecr: circleci/aws-ecr@7.2.0
 
+executors:
+  build_docker_executor:
+    machine:
+      # Docker Layer Caching
+      docker_layer_caching: true
+      # Resource Class
+      resource_class: large
+
 workflows:
   test-and-deploy:
     jobs:
@@ -15,6 +23,14 @@ workflows:
           name: Lint
           test-command: lint
           version: '8.0'
+      # AWS ECR Orb
       - aws-ecr/build-and-push-image:
-          context: aws-ce
           repo: tadashi-demo-php-apprunner
+          # Filter Branch
+          filters:
+            branches:
+              only:
+                - master
+          # Context
+          context: aws-ce
+          executor: build_docker_executor

@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
         $this->get('/');
 
         $this->assertEquals(
-            'Hello CircleCI', $this->response->getContent()
+            'Hello World', $this->response->getContent()
         );
     }
 }
